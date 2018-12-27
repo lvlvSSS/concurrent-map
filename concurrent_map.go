@@ -155,7 +155,14 @@ func (m ConcurrentMap) Pop(key string) (v interface{}, exists bool) {
 
 // Checks if map is empty.
 func (m ConcurrentMap) IsEmpty() bool {
-	return m.Count() == 0
+	if m.Count() > 0 {
+		for _, shard := range m {
+			if len(shard.items) > 0 {
+				return true
+			}
+		}
+	}
+	return false
 }
 
 // Used by the Iter & IterBuffered functions to wrap two variables together over a channel,
